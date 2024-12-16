@@ -50,35 +50,65 @@
 
 
 
-solution 1
+// solution 1 
 
-using sorting
+// using sorting
 
-function sortString(str) {
-return str.split('').sort().join('')
-
-
-}
+// function sortString(str) {
+// return str.split('').sort().join('')
 
 
-function arePermutationsUsingSort(s,t) {
-
-    if(s.length !== t.length) {
-
-        return false
-
-    }
-
-    return sortString(s) === sortString(t)
-
-}
-
-console.log(arePermutationUsingSort("listen", "silent"))
-
-console.log(arePermutationusingSort("apple", "pale"))
+// }
 
 
+// function arePermutationsUsingSort(s,t) {
 
+//     if(s.length !== t.length) {
+
+//         return false
+
+//     }
+
+//     return sortString(s) === sortString(t)
+
+// }
+
+// console.log(arePermutationUsingSort("listen", "silent"))
+
+// console.log(arePermutationusingSort("apple", "pale"))
+
+
+
+// Using character counts  
+
+
+// function arePermutationsUsingCount(s,t) {
+//     if(s.length !== t.length) {
+//         return false
+//     }
+
+//     const letters = new Array(128).fill(0)
+
+
+//     for(let char of s) {
+//         letters[char.charCodeAt(0)]++
+//     }
+
+//     for (let char of t) {
+//         letters[char.charCodeAt(0)]--
+
+//         if (letters[char.charCodeAt(0)] < 0) {
+//             return false
+//         }
+//     }
+
+//     return true
+// }
+
+
+
+// console.log( arePermutationUsingConst("listen", "silent"))
+// console.log(arePermutationUsingConst("apple", "pale"))
 
 
 
