@@ -1,3 +1,6 @@
+// 1.  Implement an algorithm to determine if a string has all unique characters. What if you 
+// cannot use additional data structures? 
+
 // @param {string} str
 // @return {boolean}
 
@@ -40,6 +43,50 @@
 
 
 // console.log(isUniqueCharsBit("hello"))
+
+
+// 2 . Check Permutation: Given two strings, write a method to decide if one is a permutation of the 
+// other.
+
+
+
+solution 1
+
+using sorting
+
+function sortString(str) {
+return str.split('').sort().join('')
+
+
+}
+
+
+function arePermutationsUsingSort(s,t) {
+
+    if(s.length !== t.length) {
+
+        return false
+
+    }
+
+    return sortString(s) === sortString(t)
+
+}
+
+console.log(arePermutationUsingSort("listen", "silent"))
+
+console.log(arePermutationusingSort("apple", "pale"))
+
+
+
+
+
+
+
+
+
+
+
 
 
 
