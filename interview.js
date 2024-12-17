@@ -166,12 +166,164 @@
 // const output = URLify(input, trueLength);
 // console.log(output); // Output: "Mr%20John%20Smith"
 
+// Palindrome Permutation: Given a string, write a function to check if it is a permutation of a palindrome. A palindrome is a word or phrase that is the same forwards and backwards. A permutation 
+// is a rearrangement of letters. The palindrome does not need to be limited to just dictionary words. 
+// 1.5 
+// 1.6 
+// EXAMPLE 
+// Input: Tact Coa 
+// Output: True (permutations: "taco cat", "atco eta", etc.) 
+// Hints: #106, #121, #134, #136
+
+
+// solution 1 using hash table 
+
+
+/**
+ * Check if a string is a permutation of a palindrome (Solution #1: Hash Table)
+ * @param {string} phrase - Input string
+ * @returns {boolean} - True if it is a permutation of a palindrome
+ */
+// function isPermutationOfPalindrome1(phrase) {
+//   const table = buildCharFrequencyTable(phrase);
+//   return checkMaxOneOdd(table);
+// }
+
+// /**
+//  * Build a character frequency table for valid characters (ignores spaces, case insensitive)
+//  * @param {string} phrase - Input string
+//  * @returns {Object} - Character frequency table
+//  */
+// function buildCharFrequencyTable(phrase) {
+//   const table = {};
+//   for (let char of phrase.toLowerCase()) {
+//     if (char >= 'a' && char <= 'z') {
+//       table[char] = (table[char] || 0) + 1;
+//     }
+//   }
+//   return table;
+// }
+
+// /**
+//  * Check that no more than one character has an odd count
+//  * @param {Object} table - Character frequency table
+//  * @returns {boolean} - True if at most one character has an odd count
+//  */
+// function checkMaxOneOdd(table) {
+//   let foundOdd = false;
+//   for (let count of Object.values(table)) {
+//     if (count % 2 === 1) {
+//       if (foundOdd) return false; // More than one character with odd count
+//       foundOdd = true;
+//     }
+//   }
+//   return true;
+// }
+
+// // Example usage
+// console.log(isPermutationOfPalindrome1("Tact Coa")); // Output: true
 
 
 
 
+// Solution #2: Inline Odd Count Check 
 
 
+/**
+ * Check if a string is a permutation of a palindrome (Solution #2: Inline Check)
+ * @param {string} phrase - Input string
+ * @returns {boolean} - True if it is a permutation of a palindrome
+ */
+// function isPermutationOfPalindrome2(phrase) {
+//   const charCounts = {};
+//   let oddCount = 0;
+
+//   for (let char of phrase.toLowerCase()) {
+//     if (char >= 'a' && char <= 'z') {
+//       charCounts[char] = (charCounts[char] || 0) + 1;
+
+//       // Update the odd count in-place
+//       if (charCounts[char] % 2 === 1) {
+//         oddCount++;
+//       } else {
+//         oddCount--;
+//       }
+//     }
+//   }
+
+//   return oddCount <= 1;
+// }
+
+// // Example usage
+// console.log(isPermutationOfPalindrome2("Tact Coa")); // Output: true
+
+
+
+
+// Solution #3: Bit Manipulation 
+
+
+
+/**
+ * Check if a string is a permutation of a palindrome (Solution #3: Bit Manipulation)
+ * @param {string} phrase - Input string
+ * @returns {boolean} - True if it is a permutation of a palindrome
+ */
+// function isPermutationOfPalindrome3(phrase) {
+//   const bitVector = createBitVector(phrase);
+//   return bitVector === 0 || checkExactlyOneBitSet(bitVector);
+// }
+
+// /**
+//  * Create a bit vector by toggling bits for each valid character
+//  * @param {string} phrase - Input string
+//  * @returns {number} - Bit vector representing character counts
+//  */
+// function createBitVector(phrase) {
+//   let bitVector = 0;
+//   for (let char of phrase.toLowerCase()) {
+//     const index = getCharNumber(char);
+//     if (index !== -1) {
+//       bitVector = toggle(bitVector, index);
+//     }
+//   }
+//   return bitVector;
+// }
+
+// /**
+//  * Convert a character to a number between 0 and 25 (a -> 0, b -> 1, ..., z -> 25)
+//  * @param {string} char - Input character
+//  * @returns {number} - Character index or -1 for invalid characters
+//  */
+// function getCharNumber(char) {
+//   const val = char.charCodeAt(0);
+//   const a = 'a'.charCodeAt(0);
+//   const z = 'z'.charCodeAt(0);
+//   return val >= a && val <= z ? val - a : -1;
+// }
+
+// /**
+//  * Toggle the ith bit in the bit vector
+//  * @param {number} bitVector - Current bit vector
+//  * @param {number} index - Index of the bit to toggle
+//  * @returns {number} - Updated bit vector
+//  */
+// function toggle(bitVector, index) {
+//   const mask = 1 << index;
+//   return (bitVector & mask) === 0 ? (bitVector | mask) : (bitVector & ~mask);
+// }
+
+// /**
+//  * Check if exactly one bit is set in the bit vector
+//  * @param {number} bitVector - Bit vector to check
+//  * @returns {boolean} - True if exactly one bit is set
+//  */
+// function checkExactlyOneBitSet(bitVector) {
+//   return (bitVector & (bitVector - 1)) === 0;
+// }
+
+// // Example usage
+// console.log(isPermutationOfPalindrome3("Tact Coa")); // Output: true
 
 
 
