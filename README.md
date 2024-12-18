@@ -231,6 +231,95 @@ console.log(isPermutationOfPalindrome2("Tact Coa"));   // true
 console.log(isPermutationOfPalindrome3("Tact Coa"));   // true
 ```
 
+Here is the README formatted version of your content:
+
+---
+
+# One Edit Away Checker
+
+## Description
+This function checks if two strings are one edit (or zero edits) away from being identical. There are three types of edits that can be performed on strings:
+1. Insert a character.
+2. Remove a character.
+3. Replace a character.
+
+### Examples
+| Input Strings      | Output  |
+|--------------------|---------|
+| `"pale", "ple"`    | `true`  |
+| `"pales", "pale"`  | `true`  |
+| `"pale", "bale"`   | `true`  |
+| `"pale", "bae"`    | `false` |
+
+---
+
+## Usage
+
+### Function Definition
+```javascript
+function oneEditAway(first, second) {
+  // Check if the length difference is more than 1
+  if (Math.abs(first.length - second.length) > 1) {
+    return false;
+  }
+
+  // Determine the shorter and longer string
+  const [shorter, longer] =
+    first.length < second.length ? [first, second] : [second, first];
+
+  let index1 = 0; // Pointer for shorter string
+  let index2 = 0; // Pointer for longer string
+  let foundDifference = false;
+
+  while (index1 < shorter.length && index2 < longer.length) {
+    if (shorter[index1] !== longer[index2]) {
+      // If a difference is already found, return false
+      if (foundDifference) {
+        return false;
+      }
+      foundDifference = true;
+
+      // If the strings are the same length, move the shorter pointer
+      if (shorter.length === longer.length) {
+        index1++;
+      }
+    } else {
+      // If matching, move the shorter pointer
+      index1++;
+    }
+    // Always move the longer pointer
+    index2++;
+  }
+
+  return true;
+}
+```
+
+---
+
+### How to Run
+1. Copy the code into a JavaScript environment, such as a browser console or Node.js.
+2. Call the function with two string arguments to determine if they are one edit away.
+3. Observe the result (`true` or `false`).
+
+### Example
+```javascript
+console.log(oneEditAway("pale", "ple")); // true
+console.log(oneEditAway("pales", "pale")); // true
+console.log(oneEditAway("pale", "bale")); // true
+console.log(oneEditAway("pale", "bae")); // false
+```
+
+---
+
+## Complexity
+- **Time Complexity:** \( O(n) \), where \( n \) is the length of the shorter string.
+- **Space Complexity:** \( O(1) \), as no additional space proportional to the input size is used.
+
+---
+
+This README should provide all necessary information for understanding, using, and testing the `oneEditAway` function.
+
 ## 🔍 Complexity Analysis
 
 ### Time Complexity
