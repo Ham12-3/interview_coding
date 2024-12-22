@@ -318,6 +318,136 @@ console.log(oneEditAway("pale", "bae")); // false
 
 ---
 
+
+Here's a **README** for your **String Compression** algorithm: 
+
+---
+
+# String Compression
+
+A JavaScript implementation of a string compression algorithm that replaces sequences of repeated characters with the character followed by the count of repetitions. For example, the string `"aabcccccaaa"` would be compressed to `"a2b1c5a3"`. However, if the compressed string would not be smaller than the original, the function returns the original string.
+
+---
+
+## Features
+
+- Compresses strings by counting consecutive repeated characters.
+- Returns the original string if compression does not reduce its length.
+- Optimized using a helper function to pre-calculate the compressed length.
+
+---
+
+## Example
+
+### Input:
+```
+"aabcccccaaa"
+```
+
+### Output:
+```
+"a2b1c5a3"
+```
+
+### Input:
+```
+"abcdef"
+```
+
+### Output:
+```
+"abcdef" // Compression is not shorter
+```
+
+---
+
+## Installation
+
+1. Copy the implementation code into your project.
+2. Call the function with your desired input string.
+
+---
+
+## Usage
+
+### Function Signature:
+```javascript
+function stringCompression(str)
+```
+
+### Example Usage:
+```javascript
+const result1 = stringCompression("aabcccccaaa");
+console.log(result1); // Output: "a2b1c5a3"
+
+const result2 = stringCompression("abcdef");
+console.log(result2); // Output: "abcdef"
+```
+
+---
+
+## Implementation
+
+### Main Code:
+```javascript
+function stringCompression(str) {
+    // Helper function to calculate the compressed length
+    function countCompression(s) {
+        let compressedLength = 0;
+        let countConsecutive = 0;
+
+        for (let i = 0; i < s.length; i++) {
+            countConsecutive++;
+
+            // If the next character is different or we reach the end
+            if (i + 1 >= s.length || s[i] !== s[i + 1]) {
+                compressedLength += 1 + countConsecutive.toString().length;
+                countConsecutive = 0;
+            }
+        }
+        return compressedLength;
+    }
+
+    // Calculate the final length of the compressed string
+    const finalLength = countCompression(str);
+    if (finalLength >= str.length) {
+        return str;
+    }
+
+    // Build the compressed string
+    let compressed = [];
+    let countConsecutive = 0;
+
+    for (let i = 0; i < str.length; i++) {
+        countConsecutive++;
+
+        // If the next character is different or we reach the end
+        if (i + 1 >= str.length || str[i] !== str[i + 1]) {
+            compressed.push(str[i]);
+            compressed.push(countConsecutive);
+            countConsecutive = 0;
+        }
+    }
+
+    return compressed.join('');
+}
+```
+
+---
+
+## Performance
+
+- **Time Complexity:** \(O(n)\), where \(n\) is the length of the input string.
+- **Space Complexity:** \(O(n)\) for storing the compressed string.
+
+---
+
+## License
+
+This implementation is open-source and can be freely used and modified.
+
+---
+
 This README should provide all necessary information for understanding, using, and testing the `oneEditAway` function.
 
 ## 🔍 Complexity Analysis
