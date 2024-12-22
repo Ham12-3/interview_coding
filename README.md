@@ -435,6 +435,200 @@ function stringCompression(str) {
 
 ---
 
+
+
+# README: Matrix and String Problems in JavaScript
+
+This document provides implementations of three classic problems related to matrices and strings in JavaScript. Each problem includes an explanation, code, and usage examples.
+
+---
+
+## 1. Rotate Matrix
+
+### **Problem**
+Given an NxN matrix, rotate it by 90 degrees in place.
+
+### **Solution**
+- Perform the rotation layer by layer.
+- For each layer, swap elements in a circular manner.
+
+### **Code**
+```javascript
+function rotateMatrix(matrix) {
+  const n = matrix.length;
+  if (n === 0 || n !== matrix[0].length) return false;
+
+  for (let layer = 0; layer < Math.floor(n / 2); layer++) {
+    const first = layer;
+    const last = n - 1 - layer;
+
+    for (let i = first; i < last; i++) {
+      const offset = i - first;
+      const top = matrix[first][i]; // save top
+
+      // left -> top
+      matrix[first][i] = matrix[last - offset][first];
+
+      // bottom -> left
+      matrix[last - offset][first] = matrix[last][last - offset];
+
+      // right -> bottom
+      matrix[last][last - offset] = matrix[i][last];
+
+      // top -> right
+      matrix[i][last] = top; // right <- saved top
+    }
+  }
+  return true;
+}
+```
+
+### **Usage**
+```javascript
+const matrix = [
+  [1, 2, 3],
+  [4, 5, 6],
+  [7, 8, 9],
+];
+rotateMatrix(matrix);
+console.log(matrix); // Rotated matrix
+```
+
+---
+
+## 2. Zero Matrix
+
+### **Problem**
+Write an algorithm that, if an element in an MxN matrix is 0, sets its entire row and column to 0.
+
+### **Solution**
+1. Check the first row and column for zeros.
+2. Use the first row and column as markers for rows and columns that need to be set to 0.
+3. Nullify rows and columns based on these markers.
+
+### **Code**
+```javascript
+function setZeroes(matrix) {
+  const rows = matrix.length;
+  const cols = matrix[0].length;
+  let rowHasZero = false;
+  let colHasZero = false;
+
+  // Check first row for zeros
+  for (let j = 0; j < cols; j++) {
+    if (matrix[0][j] === 0) {
+      rowHasZero = true;
+      break;
+    }
+  }
+
+  // Check first column for zeros
+  for (let i = 0; i < rows; i++) {
+    if (matrix[i][0] === 0) {
+      colHasZero = true;
+      break;
+    }
+  }
+
+  // Check the rest of the matrix for zeros
+  for (let i = 1; i < rows; i++) {
+    for (let j = 1; j < cols; j++) {
+      if (matrix[i][j] === 0) {
+        matrix[i][0] = 0;
+        matrix[0][j] = 0;
+      }
+    }
+  }
+
+  // Nullify rows based on the first column
+  for (let i = 1; i < rows; i++) {
+    if (matrix[i][0] === 0) {
+      for (let j = 0; j < cols; j++) {
+        matrix[i][j] = 0;
+      }
+    }
+  }
+
+  // Nullify columns based on the first row
+  for (let j = 1; j < cols; j++) {
+    if (matrix[0][j] === 0) {
+      for (let i = 0; i < rows; i++) {
+        matrix[i][j] = 0;
+      }
+    }
+  }
+
+  // Nullify the first row if needed
+  if (rowHasZero) {
+    for (let j = 0; j < cols; j++) {
+      matrix[0][j] = 0;
+    }
+  }
+
+  // Nullify the first column if needed
+  if (colHasZero) {
+    for (let i = 0; i < rows; i++) {
+      matrix[i][0] = 0;
+    }
+  }
+}
+```
+
+### **Usage**
+```javascript
+const zeroMatrix = [
+  [1, 2, 3],
+  [4, 0, 6],
+  [7, 8, 9],
+];
+setZeroes(zeroMatrix);
+console.log(zeroMatrix); // Matrix with rows and columns set to zero
+```
+
+---
+
+## 3. String Rotation
+
+### **Problem**
+Check if one string is a rotation of another using only one call to a substring check.
+
+### **Solution**
+- Concatenate the first string with itself.
+- Check if the second string is a substring of the concatenated string.
+
+### **Code**
+```javascript
+function isRotation(s1, s2) {
+  const len = s1.length;
+  if (len === s2.length && len > 0) {
+    const s1s1 = s1 + s1;
+    return s1s1.includes(s2);
+  }
+  return false;
+}
+```
+
+### **Usage**
+```javascript
+console.log(isRotation("waterbottle", "erbottlewat")); // true
+console.log(isRotation("hello", "lleho")); // false
+```
+
+---
+
+## Complexity Analysis
+
+| Problem          | Time Complexity | Space Complexity |
+|-------------------|-----------------|------------------|
+| Rotate Matrix     | \(O(N^2)\)      | \(O(1)\)         |
+| Zero Matrix       | \(O(M \times N)\)| \(O(1)\)        |
+| String Rotation   | \(O(N)\)        | \(O(N)\)         |
+
+--- 
+
+## Author
+Developed by Abdulhamid Sonaike.
+
 ## Performance
 
 - **Time Complexity:** \(O(n)\), where \(n\) is the length of the input string.
