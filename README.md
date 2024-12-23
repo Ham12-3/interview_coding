@@ -642,6 +642,354 @@ This implementation is open-source and can be freely used and modified.
 
 ---
 
+
+
+# Linked List Problems - JavaScript Solutions
+
+## Table of Contents
+1. [Node Class Implementation](#node-class-implementation)
+2. [Remove Duplicates](#remove-duplicates)
+3. [Return Kth to Last](#return-kth-to-last)
+4. [Delete Middle Node](#delete-middle-node)
+5. [Partition List](#partition-list)
+6. [Sum Lists](#sum-lists)
+7. [Palindrome](#palindrome)
+8. [Intersection](#intersection)
+9. [Loop Detection](#loop-detection)
+
+## Node Class Implementation
+```javascript
+class ListNode {
+    constructor(data) {
+        this.data = data;
+        this.next = null;
+    }
+}
+```
+
+## Remove Duplicates
+Remove duplicates from an unsorted linked list.
+
+### Solution 1: Using Hash Set
+```javascript
+function removeDups(head) {
+    if (!head) return null;
+    
+    const seen = new Set();
+    let current = head;
+    seen.add(current.data);
+    
+    while (current.next) {
+        if (seen.has(current.next.data)) {
+            current.next = current.next.next;
+        } else {
+            seen.add(current.next.data);
+            current = current.next;
+        }
+    }
+    
+    return head;
+}
+```
+
+### Solution 2: No Buffer Allowed (Using Runner)
+```javascript
+function removeDupsNoBuffer(head) {
+    if (!head) return null;
+    
+    let current = head;
+    while (current) {
+        let runner = current;
+        while (runner.next) {
+            if (runner.next.data === current.data) {
+                runner.next = runner.next.next;
+            } else {
+                runner = runner.next;
+            }
+        }
+        current = current.next;
+    }
+    
+    return head;
+}
+```
+
+## Return Kth to Last
+Find the kth to last element in a singly linked list.
+
+### Solution 1: Two Pointer Technique
+```javascript
+function kthToLast(head, k) {
+    if (!head || k < 1) return null;
+    
+    let p1 = head;
+    let p2 = head;
+    
+    // Move p1 k nodes ahead
+    for (let i = 0; i < k; i++) {
+        if (!p1) return null;
+        p1 = p1.next;
+    }
+    
+    // Move both pointers until p1 reaches the end
+    while (p1) {
+        p1 = p1.next;
+        p2 = p2.next;
+    }
+    
+    return p2;
+}
+```
+
+## Delete Middle Node
+Delete a node in the middle of a singly linked list, given only access to that node.
+
+```javascript
+function deleteMiddleNode(node) {
+    if (!node || !node.next) return false;
+    
+    node.data = node.next.data;
+    node.next = node.next.next;
+    return true;
+}
+```
+
+## Partition List
+Partition a linked list around a value x.
+
+```javascript
+function partition(head, x) {
+    if (!head) return null;
+    
+    let beforeStart = null;
+    let beforeEnd = null;
+    let afterStart = null;
+    let afterEnd = null;
+    
+    // Partition list
+    let current = head;
+    while (current) {
+        const next = current.next;
+        current.next = null;
+        
+        if (current.data < x) {
+            if (!beforeStart) {
+                beforeStart = current;
+                beforeEnd = beforeStart;
+            } else {
+                beforeEnd.next = current;
+                beforeEnd = current;
+            }
+        } else {
+            if (!afterStart) {
+                afterStart = current;
+                afterEnd = afterStart;
+            } else {
+                afterEnd.next = current;
+                afterEnd = current;
+            }
+        }
+        current = next;
+    }
+    
+    if (!beforeStart) return afterStart;
+    
+    // Merge before and after lists
+    beforeEnd.next = afterStart;
+    return beforeStart;
+}
+```
+
+## Sum Lists
+Add two numbers represented by linked lists.
+
+```javascript
+function sumLists(l1, l2) {
+    let dummy = new ListNode(0);
+    let current = dummy;
+    let carry = 0;
+    
+    while (l1 || l2 || carry) {
+        const val1 = l1 ? l1.data : 0;
+        const val2 = l2 ? l2.data : 0;
+        
+        const sum = val1 + val2 + carry;
+        carry = Math.floor(sum / 10);
+        
+        current.next = new ListNode(sum % 10);
+        current = current.next;
+        
+        if (l1) l1 = l1.next;
+        if (l2) l2 = l2.next;
+    }
+    
+    return dummy.next;
+}
+```
+
+## Palindrome
+Check if a linked list is a palindrome.
+
+```javascript
+function isPalindrome(head) {
+    if (!head || !head.next) return true;
+    
+    // Find middle using slow/fast pointer
+    let slow = head;
+    let fast = head;
+    const stack = [];
+    
+    while (fast && fast.next) {
+        stack.push(slow.data);
+        slow = slow.next;
+        fast = fast.next.next;
+    }
+    
+    // If odd length, skip middle element
+    if (fast) {
+        slow = slow.next;
+    }
+    
+    // Compare second half with stack
+    while (slow) {
+        if (slow.data !== stack.pop()) return false;
+        slow = slow.next;
+    }
+    
+    return true;
+}
+```
+
+## Intersection
+Find if two singly linked lists intersect.
+
+```javascript
+function findIntersection(list1, list2) {
+    if (!list1 || !list2) return null;
+    
+    // Get lengths and tails
+    const result1 = getTailAndSize(list1);
+    const result2 = getTailAndSize(list2);
+    
+    // If different tails, no intersection
+    if (result1.tail !== result2.tail) return null;
+    
+    // Set pointers to start of each list
+    let shorter = result1.size < result2.size ? list1 : list2;
+    let longer = result1.size < result2.size ? list2 : list1;
+    
+    // Advance longer pointer
+    longer = getKthNode(longer, Math.abs(result1.size - result2.size));
+    
+    // Move both pointers until collision
+    while (shorter !== longer) {
+        shorter = shorter.next;
+        longer = longer.next;
+    }
+    
+    return longer;
+}
+
+function getTailAndSize(list) {
+    if (!list) return null;
+    
+    let size = 1;
+    let current = list;
+    while (current.next) {
+        size++;
+        current = current.next;
+    }
+    
+    return { tail: current, size };
+}
+
+function getKthNode(head, k) {
+    let current = head;
+    while (k > 0 && current) {
+        current = current.next;
+        k--;
+    }
+    return current;
+}
+```
+
+## Loop Detection
+Detect and find the start of a loop in a linked list.
+
+```javascript
+function findLoopStart(head) {
+    if (!head || !head.next) return null;
+    
+    let slow = head;
+    let fast = head;
+    
+    // Find meeting point
+    while (fast && fast.next) {
+        slow = slow.next;
+        fast = fast.next.next;
+        if (slow === fast) break;
+    }
+    
+    // Check if no loop exists
+    if (!fast || !fast.next) return null;
+    
+    // Move slow to head and keep fast at meeting point
+    slow = head;
+    while (slow !== fast) {
+        slow = slow.next;
+        fast = fast.next;
+    }
+    
+    return fast;
+}
+```
+
+## Testing The Solutions
+Here's a helper function to create and print linked lists for testing:
+
+```javascript
+function createLinkedList(arr) {
+    if (!arr.length) return null;
+    
+    const head = new ListNode(arr[0]);
+    let current = head;
+    
+    for (let i = 1; i < arr.length; i++) {
+        current.next = new ListNode(arr[i]);
+        current = current.next;
+    }
+    
+    return head;
+}
+
+function printList(head) {
+    const values = [];
+    let current = head;
+    
+    while (current) {
+        values.push(current.data);
+        current = current.next;
+    }
+    
+    console.log(values.join(' -> '));
+}
+```
+
+Example usage:
+```javascript
+// Create a linked list: 1 -> 2 -> 3 -> 2 -> 1
+const list = createLinkedList([1, 2, 3, 2, 1]);
+console.log('Original list:');
+printList(list);
+
+console.log('Is palindrome:', isPalindrome(list));
+
+// Remove duplicates
+removeDups(list);
+console.log('After removing duplicates:');
+printList(list);
+```
+
 This README should provide all necessary information for understanding, using, and testing the `oneEditAway` function.
 
 ## 🔍 Complexity Analysis
