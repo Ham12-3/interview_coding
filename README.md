@@ -1020,3 +1020,496 @@ Contributions, optimizations, and additional approaches are welcome! Please open
 ## 📜 License
 
 [Specify Your License - e.g., MIT]
+
+
+# Stack and Queue Problems Implementation Guide
+
+This guide provides JavaScript implementations for several stack and queue-related problems, including Three Stacks in One Array, Stack Min, Stack of Plates, Queue via Stacks, Sort Stack, and Animal Shelter.
+
+## Table of Contents
+1. [Three Stacks in One Array](#three-stacks-in-one-array)
+2. [Stack Min](#stack-min)
+3. [Stack of Plates](#stack-of-plates)
+4. [Queue via Stacks](#queue-via-stacks)
+5. [Sort Stack](#sort-stack)
+6. [Animal Shelter](#animal-shelter)
+
+## Three Stacks in One Array
+
+Implementation of three stacks using a single array, with both fixed and flexible division approaches.
+
+### Fixed Division Implementation
+
+```javascript
+class FixedMultiStack {
+    constructor(stackSize) {
+        this.numberOfStacks = 3;
+        this.stackCapacity = stackSize;
+        this.values = new Array(stackSize * this.numberOfStacks).fill(0);
+        this.sizes = new Array(this.numberOfStacks).fill(0);
+    }
+
+    push(stackNum, value) {
+        if (this.isFull(stackNum)) {
+            throw new Error('Stack is full');
+        }
+        this.sizes[stackNum]++;
+        this.values[this.indexOfTop(stackNum)] = value;
+    }
+
+    pop(stackNum) {
+        if (this.isEmpty(stackNum)) {
+            throw new Error('Stack is empty');
+        }
+        const topIndex = this.indexOfTop(stackNum);
+        const value = this.values[topIndex];
+        this.values[topIndex] = 0;
+        this.sizes[stackNum]--;
+        return value;
+    }
+
+    peek(stackNum) {
+        if (this.isEmpty(stackNum)) {
+            throw new Error('Stack is empty');
+        }
+        return this.values[this.indexOfTop(stackNum)];
+    }
+
+    isEmpty(stackNum) {
+        return this.sizes[stackNum] === 0;
+    }
+
+    isFull(stackNum) {
+        return this.sizes[stackNum] === this.stackCapacity;
+    }
+
+    indexOfTop(stackNum) {
+        const offset = stackNum * this.stackCapacity;
+        const size = this.sizes[stackNum];
+        return offset + size - 1;
+    }
+}
+```
+
+## Stack Min
+
+A stack that can keep track of the minimum element.
+
+```javascript
+class NodeWithMin {
+    constructor(value, min) {
+        this.value = value;
+        this.min = min;
+    }
+}
+
+class StackWithMin {
+    constructor() {
+        this.stack = [];
+    }
+
+    push(value) {
+        const newMin = Math.min(value, this.min());
+        this.stack.push(new NodeWithMin(value, newMin));
+    }
+
+    pop() {
+        if (this.isEmpty()) {
+            throw new Error('Stack is empty');
+        }
+        return this.stack.pop().value;
+    }
+
+    min() {
+        if (this.isEmpty()) {
+            return Number.MAX_VALUE;
+        }
+        return this.stack[this.stack.length - 1].min;
+    }
+
+    peek() {
+        if (this.isEmpty()) {
+            throw new Error('Stack is empty');
+        }
+        return this.stack[this.stack.length - 1].value;
+    }
+
+    isEmpty() {
+        return this.stack.length === 0;
+    }
+}
+
+// Alternative implementation using two stacks
+class StackWithMin2 {
+    constructor() {
+        this.mainStack = [];
+        this.minStack = [];
+    }
+
+    push(value) {
+        if (value <= this.min()) {
+            this.minStack.push(value);
+        }
+        this.mainStack.push(value);
+    }
+
+    pop() {
+        if (this.isEmpty()) {
+            throw new Error('Stack is empty');
+        }
+        const value = this.mainStack.pop();
+        if (value === this.min()) {
+            this.minStack.pop();
+        }
+        return value;
+    }
+
+    min() {
+        if (this.minStack.length === 0) {
+            return Number.MAX_VALUE;
+        }
+        return this.minStack[this.minStack.length - 1];
+    }
+
+    isEmpty() {
+        return this.mainStack.length === 0;
+    }
+}
+```
+
+## Stack of Plates
+
+Implementation of a set of stacks that creates a new stack when the previous one exceeds capacity.
+
+```javascript
+class SetOfStacks {
+    constructor(capacity) {
+        this.capacity = capacity;
+        this.stacks = [];
+    }
+
+    getLastStack() {
+        if (this.stacks.length === 0) return null;
+        return this.stacks[this.stacks.length - 1];
+    }
+
+    push(value) {
+        const last = this.getLastStack();
+        if (last && last.length < this.capacity) {
+            last.push(value);
+        } else {
+            const stack = [value];
+            this.stacks.push(stack);
+        }
+    }
+
+    pop() {
+        if (this.stacks.length === 0) {
+            throw new Error('Empty stack');
+        }
+        
+        const last = this.getLastStack();
+        const value = last.pop();
+        
+        if (last.length === 0) {
+            this.stacks.pop();
+        }
+        
+        return value;
+    }
+
+    popAt(index) {
+        return this.leftShift(index, true);
+    }
+
+    leftShift(index, removeTop) {
+        const stack = this.stacks[index];
+        let removedItem;
+        
+        if (removeTop) {
+            removedItem = stack.pop();
+        } else {
+            removedItem = stack.shift();
+        }
+
+        if (stack.length === 0) {
+            this.stacks.splice(index, 1);
+        } else if (this.stacks.length > index + 1) {
+            const value = this.leftShift(index + 1, false);
+            stack.push(value);
+        }
+
+        return removedItem;
+    }
+
+    isEmpty() {
+        return this.stacks.length === 0;
+    }
+}
+```
+
+## Queue via Stacks
+
+Implementation of a queue using two stacks.
+
+```javascript
+class MyQueue {
+    constructor() {
+        this.stackNewest = [];
+        this.stackOldest = [];
+    }
+
+    size() {
+        return this.stackNewest.length + this.stackOldest.length;
+    }
+
+    add(value) {
+        this.stackNewest.push(value);
+    }
+
+    shiftStacks() {
+        if (this.stackOldest.length === 0) {
+            while (this.stackNewest.length > 0) {
+                this.stackOldest.push(this.stackNewest.pop());
+            }
+        }
+    }
+
+    peek() {
+        this.shiftStacks();
+        if (this.stackOldest.length === 0) {
+            throw new Error('Queue is empty');
+        }
+        return this.stackOldest[this.stackOldest.length - 1];
+    }
+
+    remove() {
+        this.shiftStacks();
+        if (this.stackOldest.length === 0) {
+            throw new Error('Queue is empty');
+        }
+        return this.stackOldest.pop();
+    }
+}
+```
+
+## Sort Stack
+
+Implementation of a stack sorter using only one additional stack.
+
+```javascript
+function sortStack(s) {
+    const r = [];
+    
+    while (s.length > 0) {
+        const tmp = s.pop();
+        while (r.length > 0 && r[r.length - 1] > tmp) {
+            s.push(r.pop());
+        }
+        r.push(tmp);
+    }
+
+    while (r.length > 0) {
+        s.push(r.pop());
+    }
+}
+```
+
+## Animal Shelter
+
+Implementation of an animal shelter that operates on a "first in, first out" basis.
+
+```javascript
+class Animal {
+    constructor(name) {
+        this.name = name;
+        this.order = 0;
+    }
+
+    setOrder(ord) {
+        this.order = ord;
+    }
+
+    getOrder() {
+        return this.order;
+    }
+
+    isOlderThan(animal) {
+        return this.order < animal.getOrder();
+    }
+}
+
+class Dog extends Animal {
+    constructor(name) {
+        super(name);
+    }
+}
+
+class Cat extends Animal {
+    constructor(name) {
+        super(name);
+    }
+}
+
+class AnimalQueue {
+    constructor() {
+        this.dogs = [];
+        this.cats = [];
+        this.order = 0;
+    }
+
+    enqueue(animal) {
+        animal.setOrder(this.order);
+        this.order++;
+        
+        if (animal instanceof Dog) {
+            this.dogs.push(animal);
+        } else if (animal instanceof Cat) {
+            this.cats.push(animal);
+        }
+    }
+
+    dequeueAny() {
+        if (this.dogs.length === 0) {
+            return this.dequeueCats();
+        } else if (this.cats.length === 0) {
+            return this.dequeueDogs();
+        }
+
+        const dog = this.dogs[0];
+        const cat = this.cats[0];
+
+        if (dog.isOlderThan(cat)) {
+            return this.dequeueDogs();
+        } else {
+            return this.dequeueCats();
+        }
+    }
+
+    dequeueDogs() {
+        if (this.dogs.length === 0) {
+            throw new Error('No dogs available');
+        }
+        return this.dogs.shift();
+    }
+
+    dequeueCats() {
+        if (this.cats.length === 0) {
+            throw new Error('No cats available');
+        }
+        return this.cats.shift();
+    }
+}
+```
+
+## Testing the Implementations
+
+Here's how to test each implementation:
+
+```javascript
+// Test Three Stacks
+const threeStacks = new FixedMultiStack(3);
+threeStacks.push(0, 1);
+threeStacks.push(1, 2);
+threeStacks.push(2, 3);
+console.log(threeStacks.pop(0)); // Should print 1
+
+// Test Stack Min
+const minStack = new StackWithMin();
+minStack.push(5);
+minStack.push(6);
+minStack.push(3);
+console.log(minStack.min()); // Should print 3
+
+// Test Stack of Plates
+const setOfStacks = new SetOfStacks(3);
+setOfStacks.push(1);
+setOfStacks.push(2);
+setOfStacks.push(3);
+setOfStacks.push(4);
+console.log(setOfStacks.pop()); // Should print 4
+
+// Test Queue via Stacks
+const queue = new MyQueue();
+queue.add(1);
+queue.add(2);
+queue.add(3);
+console.log(queue.remove()); // Should print 1
+
+// Test Sort Stack
+const stack = [4, 2, 1, 3];
+sortStack(stack);
+console.log(stack); // Should print [1, 2, 3, 4]
+
+// Test Animal Shelter
+const shelter = new AnimalQueue();
+shelter.enqueue(new Dog("Rex"));
+shelter.enqueue(new Cat("Whiskers"));
+shelter.enqueue(new Dog("Buddy"));
+console.log(shelter.dequeueAny().name); // Should print "Rex"
+```
+
+## Time Complexities
+
+1. Three Stacks in One Array
+   - Fixed Division: All operations O(1)
+   - Flexible Division: Push/Pop O(n) worst case, O(1) average
+
+2. Stack Min
+   - All operations O(1)
+
+3. Stack of Plates
+   - Push/Pop: O(1)
+   - PopAt: O(n)
+
+4. Queue via Stacks
+   - Add: O(1)
+   - Remove: O(n) amortized
+
+5. Sort Stack
+   - Time Complexity: O(n²)
+   - Space Complexity: O(n)
+
+6. Animal Shelter
+   - Enqueue: O(1)
+   - Dequeue: O(1)
+
+## Common Pitfalls and Edge Cases
+
+1. Stack Operations
+   - Empty stack operations
+   - Full stack operations
+   - Single element operations
+
+2. Array Bounds
+   - Array index out of bounds
+   - Negative indices
+
+3. Null/Undefined Handling
+   - Null input values
+   - Undefined stack numbers
+
+4. Capacity Issues
+   - Stack overflow
+   - Stack underflow
+
+## Best Practices
+
+1. Error Handling
+   - Always check for empty/full conditions
+   - Validate input parameters
+   - Use descriptive error messages
+
+2. Code Organization
+   - Keep methods small and focused
+   - Use meaningful variable names
+   - Add appropriate comments for complex logic
+
+3. Testing
+   - Test edge cases
+   - Test normal operations
+   - Test error conditions
+
+## License
+
+This project is licensed under the MIT License.
